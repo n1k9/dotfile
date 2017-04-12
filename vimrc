@@ -4,71 +4,64 @@
 set nocompatible              " Disable vim-compatibility - required
 filetype off                  " required
 
+call plug#begin('~/.vim/plugged')
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin('~/.vim/bundle')
-
-" alternatively, pass a path where Vundle should install plugins
-
-" let Vundle manage Vundle, required
-Plugin 'gmarik/Vundle.vim'
-
+Plug 'tpope/vim-sensible'
+Plug 'scrooloose/nerdtree'
+" Plugin 'jistr/vim-nerdtree-tabs.git'
+" Plugin 'tmhedberg/SimpylFold'
+" " Plugin 'Valloric/YouCompleteMe'
+Plug 'ntpeters/vim-better-whitespace'
+Plug 'Shougo/neocomplete.vim'
+Plug 'Shougo/neosnippet.vim' | Plug 'honza/vim-snippets'
+Plug 'majutsushi/tagbar'
+" Plugin 'sheerun/vim-polyglot'
+Plug 'tomtom/tcomment_vim'
+" Plugin 'terryma/vim-multiple-cursors'
 "
-Plugin 'scrooloose/nerdtree'
-Plugin 'jistr/vim-nerdtree-tabs.git'
-Plugin 'tmhedberg/SimpylFold'
-"Plugin 'Valloric/YouCompleteMe'
-Plugin 'ntpeters/vim-better-whitespace'
-Plugin 'Shougo/neocomplete.vim'
-Plugin 'majutsushi/tagbar'
-Plugin 'sheerun/vim-polyglot'
-Plugin 'tomtom/tcomment_vim'
-Plugin 'terryma/vim-multiple-cursors'
-
-"" Color
-Plugin 'jnurmine/Zenburn'
-Plugin 'tomasr/molokai'
-Plugin 'altercation/vim-colors-solarized'
-
-""
-Plugin 'scrooloose/syntastic'
-"Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
+" "" Color
+" Plugin 'jnurmine/Zenburn'
+Plug 'tomasr/molokai'
+" Plugin 'altercation/vim-colors-solarized'
+"
+" ""
+Plug 'scrooloose/syntastic'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 
 "" Python
 "Plugin 'klen/python-mode'
-Plugin 'davidhalter/jedi-vim'
+" Plugin 'davidhalter/jedi-vim'
 "Plugin 'nvie/vim-flake8'
 "Plugin 'vim-scripts/indentpython.vim'
 
 "" Javascript Bundle
-Plugin 'jelera/vim-javascript-syntax'
+" Plugin 'jelera/vim-javascript-syntax'
 
 "" Ruby Bundle
-Plugin 'vim-ruby/vim-ruby'
-Plugin 'tpope/vim-rails'
-Plugin 'tpope/vim-rake'
-Plugin 'tpope/vim-projectionist'
-Plugin 'thoughtbot/vim-rspec'
+" Plugin 'vim-ruby/vim-ruby'
+" Plugin 'tpope/vim-rails'
+" Plugin 'tpope/vim-rake'
+" Plugin 'tpope/vim-projectionist'
+" Plugin 'thoughtbot/vim-rspec'
 "Plugin 'ecomba/vim-ruby-refactoring'
 
 "" HTML Bundle
-Plugin 'amirh/HTML-AutoCloseTag'
-Plugin 'hail2u/vim-css3-syntax'
+" Plugin 'amirh/HTML-AutoCloseTag'
+" Plugin 'hail2u/vim-css3-syntax'
 "Plugin 'gorodinskiy/vim-coloresque'
 "Plugin 'tpope/vim-haml'
 "Plugin 'mattn/emmet-vim'
 
 
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
+call plug#end()
 filetype plugin indent on    " required
 
 set laststatus=2             " Always show the statusline
 set number
 set cursorline
+set hlsearch
+set mouse=a
 
 " Enable omni completion.
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
@@ -77,10 +70,9 @@ autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
-"" Encoding
+" Encoding
 set encoding=utf-8
 set fileencoding=utf-8
-set fileencodings=utf-8
 
 "" Fix backspace indent
 set backspace=indent,eol,start
@@ -94,6 +86,13 @@ set expandtab
 "" Map leader to ,
 let mapleader=','
 
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
 "" set split navigation
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
@@ -115,8 +114,8 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tagbar#enabled = 1
 
 "" YCM
-" let g:ycm_autoclose_preview_window_after_completion=1
-" map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+let g:ycm_autoclose_preview_window_after_completion=1
+map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
 if has('gui_running')
 	set background=dark
@@ -143,21 +142,26 @@ augroup vimrc-python
       \ cinwords=if,elif,else,for,while,try,except,finally,def,class,with
 augroup END
 
-" jedi-vim
-let g:jedi#popup_on_dot = 0
-let g:jedi#goto_assignments_command = "<leader>g"
-let g:jedi#goto_definitions_command = "<leader>d"
-let g:jedi#documentation_command = "K"
-let g:jedi#usages_command = "<leader>n"
-let g:jedi#rename_command = "<leader>r"
-let g:jedi#show_call_signatures = "0"
-let g:jedi#completions_command = "<C-Space>"
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+" " jedi-vim
+" let g:jedi#popup_on_dot = 0
+" let g:jedi#goto_assignments_command = "<leader>g"
+" let g:jedi#goto_definitions_command = "<leader>d"
+" let g:jedi#documentation_command = "K"
+" let g:jedi#usages_command = "<leader>n"
+" let g:jedi#rename_command = "<leader>r"
+" let g:jedi#show_call_signatures = "0"
+" let g:jedi#completions_command = "<C-Space>"
 
 " syntastic
 let g:syntastic_python_checkers=['python', 'flake8']
 let g:syntastic_python_flake8_post_args='--ignore=W391'
 "au BufNewFile,BufRead *.js,*.html,*.css
-"    \ set tabstop=2
+"    \ set tabstop=1
 "    \ set softtabstop=2
 "    \ set shiftwidth=2
 
@@ -202,3 +206,4 @@ let g:neocomplete#enable_smart_case = 1
 " Set minimum syntax keyword length.
 let g:neocomplete#sources#syntax#min_keyword_length = 3
 let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
+
