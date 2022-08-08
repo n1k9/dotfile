@@ -1,0 +1,54 @@
+" " Nicola Gramola                      
+"
+set nocompatible              " Disable vim-compatibility - required
+filetype off                  " required
+
+" Plug 
+call plug#begin()                
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'kyazdani42/nvim-web-devicons' " optional, for file icons
+Plug 'kyazdani42/nvim-tree.lua'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+call plug#end()
+
+filetype plugin indent on    " required
+
+set laststatus=2             " Always show the statusline
+set number
+set relativenumber
+set cursorline
+set hlsearch
+set mouse=a
+set clipboard=unnamedplus
+set completeopt
+set wildmenu
+
+" open new split panes to right and below
+set splitright splitbelow
+
+colorscheme darkblue 
+
+" move line or visually selected block - alt+j/k
+inoremap <A-j> <Esc>:m .+1<CR>==gi
+inoremap <A-k> <Esc>:m .-4<CR>==gi
+vnoremap <A-k> :m '<-2<CR>gv=gv
+vnoremap <A-j> :m '>+0<CR>gv=gv
+
+" move split panes to left/bottom/top/right
+nnoremap <A-h> <C-W>H
+nnoremap <A-j> <C-W>J
+nnoremap <A-k> <C-W>K
+nnoremap <A-l> <C-W>L
+" move between panes to left/bottom/top/right
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" Press i to enter insert mode, and ii to exit insert mode.
+:inoremap ii <Esc>
+:inoremap jk <Esc>
+:inoremap kj <Esc>
+:vnoremap jk <Esc>
+:vnoremap kj <Esc>
