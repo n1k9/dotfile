@@ -1,11 +1,14 @@
 ;;
+;; init.el
+;; ver 2022-09-16
+;;
 (package-initialize)
 ;;(add-to-list 'load-path "/usr/local/share/emacs/site-lisp")
 (setq custom-file (concat user-emacs-directory "custom-settings.el"))
 (setq use-package-always-ensure t)
 (load custom-file t)
 
-(defvar my/laptop-p (equal (system-name) "nicola-20aws0a500"))
+(defvar my/laptop-p (equal (system-name) "nicola-______"))
 
 (setq user-full-name "Nicola Gramola"
       user-mail-address "nicola.gramola@gmail.com")
@@ -114,13 +117,9 @@
   :defer t
   :hook (python-mode . eglot-ensure))
 
-
-
 (use-package magit)
 
-
 (use-package org)
-
 
 (use-package multiple-cursors)
 
@@ -131,6 +130,3 @@
 (use-package melancholy-theme)
 
 
-;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
-(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
-;; ## end of OPAM user-setup addition for emacs / base ## keep this line
