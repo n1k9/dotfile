@@ -1,132 +1,163 @@
 ;;
-;; init.el
-;; ver 2022-09-16
-;;
-(package-initialize)
-;;(add-to-list 'load-path "/usr/local/share/emacs/site-lisp")
-(setq custom-file (concat user-emacs-directory "custom-settings.el"))
-(setq use-package-always-ensure t)
-(load custom-file t)
-
-(defvar my/laptop-p (equal (system-name) "nicola-______"))
-
 (setq user-full-name "Nicola Gramola"
       user-mail-address "nicola.gramola@gmail.com")
 
-(unless (assoc-default "melpa" package-archives)
-  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
-(unless (assoc-default "elpa" package-archives)
-  (add-to-list 'package-archives '("elpa" . "https://elpa.gnu.org/packages/") t))
-(unless (assoc-default "nongnu" package-archives)
-  (add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/") t))
+;;
+;; You will most likely need to adjust this font size for your system!
+(defvar runemacs/default-font-size 180)
 
+
+(setq inhibit-startup-message t)
+
+(scroll-bar-mode -1)        ; Disable visible scrollbar
+(tool-bar-mode -1)          ; Disable the 
+(tooltip-mode -1)           ; Disable tooltips
+(set-fringe-mode 10)        ; Give some breathing room
+
+(menu-bar-mode -1)            ; Disable the menu bar
+
+;; Set up the visible bell
+(setq visible-bell t)
+
+(recentf-mode 1)
+
+;; Save what you enter into minibuffer prompts
+(setq history-length 25)
+(savehist-mode 1)
+
+;; Remember and restore the last cursor location of opened files
+(save-place-mode 1)
+
+;; (set-face-attribute 'default nil :font "Monoscace" :height runemacs/default-font-size)
+
+(load-theme 'wombat)
+
+
+;; Make ESC quit prompts
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+;; Initialize package sources
+(require 'package)
+
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                         ("org" . "https://orgmode.org/elpa/")
+                         ("elpa" . "https://elpa.gnu.org/packages/")))
+
+(package-initialize)
+(unless package-archive-contents
+ (package-refresh-contents))
+
+;; Initialize use-package on non-Linux platforms
 (unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-(setq use-package-verbose t)
-(setq use-package-always-ensure t)
+   (package-install 'use-package))
+
 (require 'use-package)
+(setq use-package-always-ensure t)
 
-;; Useful defaults
-(use-package emacs
-  :init
-  ;; <OPTIONAL> Setting my favorite fonts here. You can replace "Roboto" with your favorite font.
-  ;; You can also also adjust the size of the font with the "height" here under.
-  ;; (set-face-attribute 'default nil :family "Roboto Mono" :height 110 :weight 'regular)
-  ;; (set-face-attribute 'fixed-pitch nil :family "Roboto Mono" :height 110 :weight 'medium)
-  ;; (set-face-attribute 'variable-pitch nil :family "Roboto Regular" :height 110 :weight 'medium)
-  :config
-  (setq-default cursor-type 'bar)              ; Line-style cursor similar to other text editors
-  (setq inhibit-startup-screen t)              ; Disable startup screen (the welcome to Emacs message)
-  ;; (setq initial-scratch-message "")	       ; Make *scratch* buffer blank
-  (setq-default frame-title-format '("%b"))    ; Make window title the buffer name
-  ;; (setq confirm-kill-processes nil)            ; Stop confirming the killing of processes
-  (setq use-short-answers t)	               ; y-or-n-p makes answering questions faster
-  (show-paren-mode t)	                       ; Visually indicates pair of matching parentheses
-  (delete-selection-mode t)                    ; Start writing straight after deletion
-  (setq read-process-output-max (* 1024 1024)) ; Increase the amount of data which Emacs reads from the process
-  (global-hl-line-mode 1))
+(column-number-mode)
+(global-display-line-numbers-mode t)
 
-;; (use-package better-defaults)
+;; Disable line numbers for some modes
+(dolist (mode '(org-mode-hook
+                term-mode-hook
+                shell-mode-hook
+                eshell-mode-hook))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-;; (use-package auto-compile
-;;   :if my/laptop-p
-;;   :config (auto-compile-on-load-mode))
-;; (setq load-prefer-newer t)
+(use-package command-log-mode)
 
-;; autocoplete
-(use-package company
+(use-package ivy
   :diminish
-  :init (global-company-mode)
-  :config (setq company-backends
-		'((company-files         ; files & directory
-		   company-keywords      ; keywords
-		   company-capf)         ; completion-at-point-functions
-		  (company-abbrev company-dabbrev)
-		  ))
+  :bind (("C-s" . swiper)
+         :map ivy-minibuffer-map
+         ("TAB" . ivy-alt-done)
+         ("C-l" . ivy-alt-done)
+         ("C-j" . ivy-next-line)
+         ("C-k" . ivy-previous-line)
+         :map ivy-switch-buffer-map
+         ("C-k" . ivy-previous-line)
+         ("C-l" . ivy-done)
+         ("C-d" . ivy-switch-buffer-kill)
+         :map ivy-reverse-i-search-map
+         ("C-k" . ivy-previous-line)
+         ("C-d" . ivy-reverse-i-search-kill))
+  :config
+  (ivy-mode 1))
 
-(use-package company-statistics
-    ;; :straight t
-    :init (company-statistics-mode))
+(use-package doom-modeline
+  :init (doom-modeline-mode 1)
+  :custom ((doom-modeline-height 15)))
 
-(use-package company-web)
+(use-package doom-themes
+  :init (load-theme 'doom-gruvbox))
 
-(use-package company-try-hard
-    :bind    (("C-<tab>" . company-try-hard)
-	      :map company-active-map
-	      ("C-<tab>" . company-try-hard)))
-(use-package company-quickhelp
-    :config (company-quickhelp-mode))
-     
-;; (use-package company-posframe
-;;   :if my/laptop-p
-;;   :init (company-posframe-mode 1)
-;;   :diminish
-;;   )
-)
-  
-;; 
-(use-package neotree
-  :config (global-set-key [f8] 'neotree-toggle)
-  ;; :config (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+(use-package rainbow-delimiters
+  :hook (prog-mode . rainbow-delimiters-mode))
+
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 1))
+
+(use-package ivy-rich
+  :init
+  (ivy-rich-mode 1))
+
+(use-package counsel
+  :bind (("M-x" . counsel-M-x)
+         ("C-x b" . counsel-ibuffer)
+         ("C-x C-f" . counsel-find-file)
+         :map minibuffer-local-map
+         ("C-r" . 'counsel-minibuffer-history)))
+
+(use-package evil
+  :init
+  (evil-mode -1))
+
+(use-package company
+  :ensure t
+  :init
+  (add-hook 'after-init-hook 'global-company-mode)
+  :config
+  (setq company-dabbrev-downcase 0)
+  (setq company-idle-delay 0.1)
+  (setq company-minimum-prefix-length 1)
+  (setq company-tooltip-align-annotations t))
+
+(use-package magit
+  :ensure t )
+
+(use-package helpful
+  :custom
+  (counsel-describe-function-function #'helpful-callable)
+  (counsel-describe-variable-function #'helpful-variable)
+  :bind
+  ([remap describe-function] . counsel-describe-function)
+  ([remap describe-command] . helpful-command)
+  ([remap describe-variable] . counsel-describe-variable)
+  ([remap describe-key] . helpful-key))
+
+(use-package nerd-icons
+  ;; :custom
+  ;; The Nerd Font you want to use in GUI
+  ;; "Symbols Nerd Font Mono" is the default and is recommended
+  ;; but you can use any other Nerd Font if you want
+  ;; (nerd-icons-font-family "Symbols Nerd Font Mono")
   )
 
-;; python
-;; (use-package elpy
-;;   :bind (:map elpy-mode-map
-;; 	      ("C-M-n" . elpy-nav-forward-block)
-;; 	      ("C-M-p" . elpy-nav-backword-block))
-;;   :hook ((elpy-mode . flycheck-mode)
-;; 	 (elpy-mode . (lambda()
-;; 			(set (make-local-variable 'company-backends)
-;; 			     '((elpy-company-backend ::with company-yasnippet))))))
-;;   :config (setq elpy-rpc-virtualenv-path 'current)
-;;   ;; :ensure t
-;;   :init (elpy-enable))
-
-;; (use-package flycheck
-;;   :config (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-;;   :config (add-hook 'elpy-mode-hook 'flycheck-mode))
-
-
-;;; <EGLOT> configuration, pick this or the LSP configuration but not both.
-;; Using Eglot with Pyright, a language server for Python.
-;; See: https://github.com/joaotavora/eglot.
-(use-package eglot
-  :ensure t
-  :defer t
-  :hook (python-mode . eglot-ensure))
-
-(use-package magit)
-
-(use-package org)
-
-(use-package multiple-cursors)
-
-;; Themes
-(use-package monokai-theme)
-(use-package material-theme
-  :init (load-theme 'material))
-(use-package melancholy-theme)
-
-
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("48042425e84cd92184837e01d0b4fe9f912d875c43021c3bcb7eeb51f1be5710" default))
+ '(package-selected-packages
+   '(company which-key rainbow-delimiters ivy-rich helpful doom-themes doom-modeline counsel command-log-mode)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
